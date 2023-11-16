@@ -1,0 +1,45 @@
+import os
+import subprocess
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from PIL import
+
+def list_games(directory):
+    """Recursively lists directories containing a main.lua file."""
+    game_dirs = []
+    for root, dirs, files in os.walk(directory):
+        if 'main.lua' in files:
+            game_dirs.append(root)
+    print("Found games:",game_dirs) # DEBUGGING LINE
+    return game_dirs
+
+def launch_game():
+    """Launches the selected game."""
+    selected_game_dir = game_listbox.get(tk.ANCHOR)
+    if selected_game_dir:
+        subprocess.run(["love", selected_game_dir])
+    else:
+        messagebox.showinfo("Info", "Please select a game first.")
+
+# Change this to the path where your games are stored
+games_directory = "/root/Bureau/Project"
+
+# Set up the main window
+root = tk.Tk()
+root.title("Love2D Game Launcher")
+
+# Create a listbox to show the games
+game_listbox = tk.Listbox(root)
+game_listbox.pack(fill=tk.BOTH, expand=True)
+
+# Populate the listbox with available games
+for game_dir in list_games(games_directory):
+    game_listbox.insert(tk.END, game_dir)
+
+# Create a launch button
+launch_button = tk.Button(root, text="Launch Game", command=launch_game)
+launch_button.pack()
+
+# Start the GUI event loop
+root.mainloop()
